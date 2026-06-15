@@ -59,6 +59,11 @@ header img {
 	border: 1px solid #999;
 }
 
+#torrents-search[hidden] {
+	/* Why is this needed lmao?? */
+	display: none;
+}
+
 #torrents-search:focus {
 	box-shadow: 0 0 6px #aac;
 }
