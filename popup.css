@@ -18,8 +18,7 @@ body, html {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	max-width: 420px;
-	max-height: 500px;
+	min-width: 420px;
 }
 
 header {
@@ -54,7 +53,7 @@ header img {
 #torrents-search {
 	flex: none;
 	display: block;
-	margin: 0 1em 0.6em;
+	margin: 0 1em 1em;
 	padding: 0.4em;
 	border-radius: 3px;
 	border: 1px solid #999;
@@ -185,6 +184,11 @@ header img {
 	}
 	#torrents-list li {
 		border-color: rgb(70, 70, 70);
+	}
+	#torrents-search {
+		background: rgb(80, 80, 80);
+		border-color: rgb(140, 140, 140);
+		color: rgb(240, 240, 240);
 	}
 	#custom-modal {
 		background: rgb(50, 50, 50);
