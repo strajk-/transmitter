@@ -73,26 +73,27 @@ function searchTorrents () {
 torrentsSearch.addEventListener('change', searchTorrents)
 torrentsSearch.addEventListener('keyup', searchTorrents)
 
-function refreshTorrents (server) {
-	return rpcCall('torrent-get', getArgs).then(response => {
-		let newTorrents = response.arguments.torrents
-		newTorrents.sort((x, y) => y.queuePosition - x.queuePosition)
-		cachedTorrents = newTorrents
-		torrentsSearch.hidden = newTorrents.length <= 8
-		if (torrentsSearch.hidden) {
-			torrentsSearch.value = ''
-			renderTorrents(newTorrents)
-		} else {
-			searchTorrents()
-		}
-	})
+async function refreshTorrents () {
+	const response = await rpcCall('torrent-get', getArgs);
+	const newTorrents = response.arguments.torrents
+	newTorrents.sort((x, y) => y.queuePosition - x.queuePosition)
+	cachedTorrents = newTorrents
+	torrentsSearch.hidden = newTorrents.length <= 8
+	if (torrentsSearch.hidden) {
+		torrentsSearch.value = ''
+		renderTorrents(newTorrents)
+	} else {
+		searchTorrents()
+	}
 }
 
-function refreshTorrentsLogErr (server) {
-	return refreshTorrents(server).catch(err => {
-		console.error(err)
-		torrentsError.textContent = 'Error: ' + err.toString()
-	})
+async function refreshTorrentsLogErr () {
+	try {
+		return await refreshTorrents();
+	} catch (err) {
+		console.error(err);
+		torrentsError.textContent = 'Error: ' + err.toString();
+	}
 }
 
 function showTorrents (server) {
@@ -101,8 +102,8 @@ function showTorrents (server) {
 	for (const opener of document.querySelectorAll('.webui-opener')) {
 		opener.href = server.base_url + 'web/'
 	}
-	refreshTorrents(server).catch(_ => refreshTorrentsLogErr(server))
-	setInterval(() => refreshTorrentsLogErr(server), 2000)
+	refreshTorrents().catch(_ => refreshTorrentsLogErr())
+	setInterval(_ => refreshTorrentsLogErr(), 2000)
 }
 
 browser.storage.local.get('server').then(({server}) => {
@@ -123,14 +124,9 @@ async function removeTorrents(ids, deleteData = false) {
 		}
 
 		await rpcCall('torrent-remove', args);
-
-		browser.storage.local.get('server').then(({server}) => {
-			if (server && server.base_url) {
-				refreshTorrentsLogErr(server);
-			}
-		});
 	} catch (err) {
-		console.error("Transmitter: Failed to remove torrents", err);
+		console.error(err);
+		torrentsError.textContent = 'Failed to remove torrents: ' + err.toString();
 	}
 }
 
