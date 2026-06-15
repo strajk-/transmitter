@@ -94,11 +94,11 @@ function renderTorrents (newTorrents) {
         deleteBtn.onclick = async (e) => {
             e.preventDefault()
             e.stopPropagation()
-            
+
             if (torr.percentDone < 1) {
-                const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`);
+                const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`)
                 if (confirmed) {
-                    removeTorrents([torr.id], true);
+                    removeTorrents([torr.id], true)
                 }
             } else {
                 const confirmed = await showConfirm(`"${torr.name}" is complete and seeding.\nRemove from list? Downloaded data will be kept.`)
@@ -205,11 +205,11 @@ function showConfirm(message) {
 
 document.getElementById('clear-completed').addEventListener('click', async (e) => {
     e.preventDefault();
-    
+
     const completedIds = cachedTorrents
         .filter(t => t.percentDone === 1)
         .map(t => t.id);
-        
+
     if (completedIds.length > 0) {
         const confirmed = await showConfirm(`Remove ${completedIds.length} completed torrent(s) from list? Downloaded data will be kept.`)
         if (confirmed) {

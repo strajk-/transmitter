@@ -91,12 +91,12 @@ header img {
 
 #torrents-list progress.complete::-webkit-progress-value,
 #torrents-list progress.complete::-moz-progress-bar {
-	background: #26aa55;
+    background: #26aa55;
 }
 
 #torrents-list progress.paused::-webkit-progress-value,
 #torrents-list progress.paused::-moz-progress-bar {
-	background: #828282;
+    background: #828282;
 }
 
 .torrent-head {
