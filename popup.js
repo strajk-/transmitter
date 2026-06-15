@@ -51,13 +51,12 @@ function renderTorrents (newTorrents) {
 			e.preventDefault()
 			e.stopPropagation()
 
-			if (torr.percentDone < 1) {
-				const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`);
-				if (confirmed) {
-					removeTorrents([torr.id], true);
-				}
-			} else {
-				removeTorrents([torr.id], false);
+			const incomplete = torr.percentDone < 1;
+			const confirmed = await showConfirm(incomplete
+				? `"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`
+				: `"${torr.name}" is complete.\nRemove it without deleting downloaded data?`);
+			if (confirmed) {
+				removeTorrents([torr.id], incomplete);
 			}
 		}
 	}
@@ -156,14 +155,15 @@ function showConfirm(message) {
 	});
 }
 
-document.getElementById('clear-completed').addEventListener('click', (e) => {
+document.getElementById('clear-completed').addEventListener('click', async (e) => {
 	e.preventDefault();
 
 	const completedIds = cachedTorrents
 		.filter(t => t.percentDone === 1)
 		.map(t => t.id);
 
-	if (completedIds.length > 0) {
+	const ts = completedIds.length;
+	if (ts > 0 && await showConfirm(`Remove ${ts} completed torrent${ts == 1 ? '' : 's'} without deleting downloaded data?`)) {
 		removeTorrents(completedIds, false);
 	}
 });
