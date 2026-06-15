@@ -19,7 +19,7 @@ const torrentsList = document.getElementById('torrents-list')
 const torrentsTpl = document.getElementById('torrents-tpl')
 const torrentsError = document.getElementById('torrents-error')
 const getArgs = {
-	fields: ['name', 'percentDone', 'rateDownload', 'rateUpload', 'queuePosition']
+	fields: ['id', 'name', 'percentDone', 'rateDownload', 'rateUpload', 'queuePosition']
 }
 let cachedTorrents = []
 
@@ -44,6 +44,22 @@ function renderTorrents (newTorrents) {
 		cont.querySelector('.torrent-name').textContent = torr.name
 		cont.querySelector('.torrent-speeds').textContent = speeds
 		cont.querySelector('.torrent-progress').value = torr.percentDone * 100
+
+		const deleteBtn = cont.querySelector('.remove-torrent-btn')
+
+		deleteBtn.onclick = async (e) => {
+			e.preventDefault()
+			e.stopPropagation()
+
+			if (torr.percentDone < 1) {
+				const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`);
+				if (confirmed) {
+					removeTorrents([torr.id], true);
+				}
+			} else {
+				removeTorrents([torr.id], false);
+			}
+		}
 	}
 }
 
@@ -97,3 +113,57 @@ browser.storage.local.get('server').then(({server}) => {
 		showConfig(server)
 	}
 })
+
+async function removeTorrents(ids, deleteData = false) {
+	if (!ids || ids.length === 0) return;
+	try {
+		const args = { ids: ids };
+
+		if (deleteData === true) {
+			args['delete-local-data'] = true;
+		}
+
+		await rpcCall('torrent-remove', args);
+
+		browser.storage.local.get('server').then(({server}) => {
+			if (server && server.base_url) {
+				refreshTorrentsLogErr(server);
+			}
+		});
+	} catch (err) {
+		console.error("Transmitter: Failed to remove torrents", err);
+	}
+}
+
+function showConfirm(message) {
+	return new Promise((resolve) => {
+		const dialog = document.getElementById('custom-modal');
+		const text = document.getElementById('modal-text');
+		const btnYes = document.getElementById('modal-yes');
+		const btnCancel = document.getElementById('modal-cancel');
+
+		text.textContent = message;
+		dialog.showModal();
+
+		const cleanup = () => {
+			dialog.close();
+			btnYes.onclick = null;
+			btnCancel.onclick = null;
+		};
+
+		btnYes.onclick = () => { cleanup(); resolve(true); };
+		btnCancel.onclick = () => { cleanup(); resolve(false); };
+	});
+}
+
+document.getElementById('clear-completed').addEventListener('click', (e) => {
+	e.preventDefault();
+
+	const completedIds = cachedTorrents
+		.filter(t => t.percentDone === 1)
+		.map(t => t.id);
+
+	if (completedIds.length > 0) {
+		removeTorrents(completedIds, false);
+	}
+});
