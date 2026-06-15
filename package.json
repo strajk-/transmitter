@@ -5,6 +5,7 @@
   "description": "build stuff for transmitter",
   "author": "Val Packett",
   "license": "Unlicense",
+  "type": "commonjs",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore --ignore-pattern *.min.js . && echo ESLint OK",
     "build": "node Build.js && echo Build OK"
