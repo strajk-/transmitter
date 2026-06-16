@@ -96,14 +96,14 @@ function renderTorrents (newTorrents) {
             e.stopPropagation()
 
             if (torr.percentDone < 1) {
-                const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`)
+                const confirmed = await showConfirm(`"${torr.name}" is incomplete.\nRemove it AND delete downloaded data?`);
                 if (confirmed) {
-                    removeTorrents([torr.id], true)
+                    removeTorrents([torr.id], true);
                 }
             } else {
-                const confirmed = await showConfirm(`"${torr.name}" is complete and seeding.\nRemove from list? Downloaded data will be kept.`)
+                const confirmed = await showConfirm(`"${torr.name}" is complete and seeding.\nRemove from list? Downloaded data will be kept.`);
                 if (confirmed) {
-                    removeTorrents([torr.id], false)
+                    removeTorrents([torr.id], false);
                 }
             }
         }
