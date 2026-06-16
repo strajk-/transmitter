@@ -1,7 +1,6 @@
 [
 ![Mozilla Add-on](https://img.shields.io/amo/v/transmitter-for-transmission.svg)
 ![Mozilla Stars](https://img.shields.io/amo/stars/transmitter-for-transmission.svg)
-![Mozilla Downloads](https://img.shields.io/amo/d/transmitter-for-transmission.svg)
 ](https://addons.mozilla.org/firefox/addon/transmitter-for-transmission/)
 [![unlicense](https://img.shields.io/badge/un-license-green.svg?style=flat)](https://unlicense.org)
 
